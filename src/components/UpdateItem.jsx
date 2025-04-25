@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-const API_URI = http://${import.meta.env.VITE_API_URI}/doors;
-import DoorCard =({ door }) from "./DoorCard";
+const API_URI = `http://${import.meta.env.VITE_API_URI}/doors`;
+import DoorCard from "./doorCard";
 
 const UpdateItem = ({ item }) => {
     
@@ -29,6 +29,22 @@ const UpdateItem = ({ item }) => {
         setFormData({...formData, [key]: value });
     }
 
+    async function handleForm(e){
+        e.preventDefault();
+        try {
+            const {name, status} = formData;
+            if(!name || !status) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            await axios.post(API_URI, {formData});
+            alert("Item added successfully!");
+            getData();
+        } catch (error) {
+            console.error("Error updating item:", error);
+            alert("Error updating item. Please try again later.");
+        }
+    }
 
     useEffect(() => {
         getData();
@@ -40,33 +56,22 @@ const UpdateItem = ({ item }) => {
         <div>
             {
                 doors.map((ele) => (
-                    <DoorCard key={ele.id} door={ele} getDoors/>
+                    <DoorCard key={ele.id} door={ele}/>
                 ))
             }
 
             <div>
                 <h3>Update Item</h3>
-                <form action="">
-                    <input type="text" value={doorForm.name} onChange={handleInput} name="name" placeholder="Enter Door Name..."/> 
-
-                    <input type="text" name="status" id="status" />
-                    <button type="submit" onChange={handleChange()}>Update</button>
+                <form action="" onSubmit={handleForm}>
+                    <label htmlFor="name" value={formData.name} placeholder='Enter door name.....'>Name: </label>
+                    <input type="text" name="name" id="name" onChange={handleChange}/>
+                    <label htmlFor="status" value={formData.status} placeholder='Enter status.....' >Status: </label>
+                    <input type="text" name="status" id="status" onChange={handleChange}/>
+                    <button type="submit" >Update</button>
                 </form>
 
             </div>
         </div>
-        aync funnction handleForm(){
-            try{
-                const {name,status} =doorForm;
-                if(!name || !status){
-                    alert("Please fill all the fields");
-                    return;
-                }          
-            await axios.post(API_URI,doorForm);
-         alert("Door updated successfully");
-         getDoors();   
-        }
-        }
     );
 };
 
